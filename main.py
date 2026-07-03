@@ -20,6 +20,12 @@ class HelpTypst(Star):
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
         self.template_path = self.plugin_dir / "templates" / InternalCFG.NAME_TEMPLATE
+        self.schema_path = self.plugin_dir / "_conf_schema.json"
+
+        # 2. 配置加载
+        self.config = config
+        self.plugin_config = TypstPluginConfig.load(config)
+
         # 自定义模板路径
         if self.plugin_config.custom_template_path:
             custom_tp = Path(self.plugin_config.custom_template_path)
@@ -28,11 +34,6 @@ class HelpTypst(Star):
                 logger.info(f"[HelpTypst] 使用自定义模板: {custom_tp}")
             else:
                 logger.warning(f"[HelpTypst] 自定义模板路径无效，回退到内置模板: {custom_tp}")
-        self.schema_path = self.plugin_dir / "_conf_schema.json"
-
-        # 2. 配置加载
-        self.config = config
-        self.plugin_config = TypstPluginConfig.load(config)
         
         # 3. 获取字体
         raw_path = self.plugin_config.custom_font_path
