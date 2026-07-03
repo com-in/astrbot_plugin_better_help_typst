@@ -49,6 +49,12 @@
     "default": "",
     "hint": "绝对路径。缺省值 .../data/plugin_data/astrbot_plugin_help_typst/fonts"
   },
+  "custom_template_path": {
+    "description": "自定义模板路径",
+    "type": "string",
+    "default": "",
+    "hint": "自定义 .typ 模板文件的绝对路径。留空则使用插件内置模板。修改模板后可完全自定义渲染样式"
+  },
   "rendering": {
     "description": "渲染引擎设置",
     "type": "object",
@@ -121,6 +127,38 @@
       }
     }
   },
+  "custom_items": {
+    "description": "自定义菜单项目",
+    "type": "template_list",
+    "default": [],
+    "hint": "添加自定义条目到 Help 菜单末尾（如群规则、常用链接等）",
+    "templates": {
+      "custom_item_template": {
+        "name": "自定义项目",
+        "hint": "自定义显示的菜单条目",
+        "items": {
+          "section_title": {
+            "description": "分区标题",
+            "type": "string",
+            "default": "自定义项目",
+            "hint": "该分区在 help 菜单中显示的标题"
+          },
+          "section_desc": {
+            "description": "分区描述",
+            "type": "string",
+            "default": "",
+            "hint": "分区下方的副标题说明"
+          },
+          "entries": {
+            "description": "条目列表（每行一个，格式：名称|描述）",
+            "type": "string",
+            "default": "",
+            "hint": "每行一个条目，用 | 分隔名称和描述\n例如：\n群规则|请遵守群规\n官网|https://example.com"
+          }
+        }
+      }
+    }
+  },
   "appearance": {
     "description": "外观与主题预设",
     "type": "object",
@@ -173,6 +211,12 @@
                 "type": "string",
                 "default": "",
                 "hint": "填写图床直链或图片URL，留空则使用纯色背景。支持 jpg/png/webp 等常见格式"
+              },
+              "background_opacity": {
+                "description": "背景图片不透明度",
+                "type": "string",
+                "default": "100%",
+                "hint": "背景图片的透明度，100% 为完全不透明，50% 为半透明。支持百分比或 0-1 小数"
               },
               "c_text_primary": {
                 "description": "分区大标题颜色",

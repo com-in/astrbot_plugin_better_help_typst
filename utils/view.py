@@ -160,6 +160,9 @@ class TypstLayout:
         payload["colors"] = self.cfg.appearance.get_active_colors()
         # 注入背景图
         payload["background_image"] = self.cfg.appearance.background_image
+        payload["background_opacity"] = self.cfg.appearance.background_opacity
+        # 注入自定义项目
+        payload["custom_items"] = [ci.model_dump() for ci in self.cfg.custom_items]
 
         save_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"

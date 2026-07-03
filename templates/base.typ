@@ -14,10 +14,25 @@
 // --- 页面设置 ---
 #let page_fill       = get_color("page_fill", "#f0f2f5")
 #let background_image = data.at("background_image", default: "")
+#let background_opacity = data.at("background_opacity", default: "100%")
+#let parse_opacity(v) = {
+  if type(v) == str and v.ends-with("%") {
+    float(v.trim("%", at: end)) / 100
+  } else if type(v) == str {
+    float(v)
+  } else if type(v) in (int, float) {
+    float(v)
+  } else {
+    1.0
+  }
+}
 #set page(
   width: 900pt, height: auto, margin: 20pt, fill: page_fill,
   background: if background_image != "" {
-    place(top + left, image(background_image, width: 100%, height: 100%))
+    place(top + left, {
+      let op = parse_opacity(background_opacity)
+      image(background_image, width: 100%, height: 100%, opacity: int(op * 100) + "%")
+    })
   }
 )
 #set text(font: user_fonts, size: 12pt)
@@ -581,6 +596,54 @@
 
 // --- Singles ---
 #render_singles_section(data.singles)
+
+// --- 自定义项目 ---
+#let custom_items = data.at("custom_items", default: ())
+#if custom_items != none and custom_items.len() > 0 {
+  v(15pt)
+  align(center)[
+    #text(size: 16pt, weight: "bold", fill: c_text_primary)[✨ 自定义项目] \
+    #v(5pt)
+    #text(size: 10pt, fill: c_desc_text)[管理员添加的自定义条目]
+  ]
+  v(10pt)
+  for section in custom_items {
+    let stitle = section.at("section_title", default: "自定义项目")
+    let sdesc = section.at("section_desc", default: "")
+    let entries = section.at("entries", default: ())
+    v(6pt)
+    block(
+      width: 100%, fill: white, radius: 8pt, inset: 12pt, stroke: 0.5pt + luma(220)
+    )[
+      #text(weight: "bold", size: 14pt, fill: c_plugin_name)[#stitle]
+      #if sdesc != "" {
+        v(2pt)
+        text(size: 9pt, fill: c_desc_text)[#sdesc]
+      }
+      #if entries != none and entries.len() > 0 {
+        v(6pt)
+        line(length: 100%, stroke: 1pt + luma(240))
+        v(6pt)
+        for entry in entries {
+          let ename = entry.at("name", default: "")
+          let edesc = entry.at("desc", default: "")
+          grid(
+            columns: (auto, 1fr), gutter: 6pt,
+            align(right)[#bullet_icon],
+            align(left)[
+              #text(weight: "bold", fill: c_leaf_text)[#ename]
+              #if edesc != "" {
+                h(4pt)
+                text(size: 9pt, fill: c_desc_text)[#edesc]
+              }
+            ]
+          )
+          if entry != entries.last() { v(4pt) }
+        }
+      }
+    ]
+  }
+}
 
 #v(20pt)
 #align(center + bottom)[
