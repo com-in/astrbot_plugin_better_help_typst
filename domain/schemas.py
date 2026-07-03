@@ -57,3 +57,18 @@ class PluginMetadata(BaseModel):
     desc: SafeStr = Field(default="", description="描述")
 
     nodes: list[RenderNode] = Field(default_factory=list)
+
+
+class CustomEntry(BaseModel):
+    """自定义菜单条目"""
+    model_config = ConfigDict(extra="ignore")
+    name: SafeName = Field(..., description="条目名称")
+    desc: SafeStr = Field(default="", description="条目描述")
+
+
+class CustomItem(BaseModel):
+    """自定义菜单分区"""
+    model_config = ConfigDict(extra="ignore")
+    section_title: SafeName = Field(default="自定义项目", description="分区标题")
+    section_desc: SafeStr = Field(default="", description="分区描述")
+    entries: list[CustomEntry] = Field(default_factory=list, description="条目列表")

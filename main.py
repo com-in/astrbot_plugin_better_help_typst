@@ -25,6 +25,15 @@ class HelpTypst(Star):
         # 2. 配置加载
         self.config = config
         self.plugin_config = TypstPluginConfig.load(config)
+
+        # 自定义模板路径
+        if self.plugin_config.custom_template_path:
+            custom_tp = Path(self.plugin_config.custom_template_path)
+            if custom_tp.exists() and custom_tp.is_file():
+                self.template_path = custom_tp
+                logger.info(f"[HelpTypst] 使用自定义模板: {custom_tp}")
+            else:
+                logger.warning(f"[HelpTypst] 自定义模板路径无效，回退到内置模板: {custom_tp}")
         
         # 3. 获取字体
         raw_path = self.plugin_config.custom_font_path
@@ -145,6 +154,65 @@ class HelpTypst(Star):
         except Exception as e:
             yield event.plain_result(f"❌ 自动重载失败: {e}")
 
+    @typst.command("blacklist")
+    async def cmd_blacklist_root(self, event: AstrMessageEvent):
+        """黑名单管理根指令，显示帮助"""
+        yield event.plain_result(
+            "⚙️ 黑名单管理指令:\n"
+            "/typst blacklist list - 查看当前黑名单\n"
+            "/typst blacklist add <插件ID> - 将插件加入黑名单\n"
+            "/typst blacklist remove <插件ID> - 将插件移出黑名单"
+        )
+
+    @typst.command("blacklist")
+    async def cmd_blacklist_list(self, event: AstrMessageEvent, sub: str = ""):
+        """黑名单列表"""
+        if sub != "list":
+            return
+        plugins = sorted(self.plugin_config.ignored_plugins)
+        if not plugins:
+            yield event.plain_result("📋 当前黑名单为空")
+        else:
+            yield event.plain_result(
+                f"📋 当前黑名单 ({len(plugins)} 个):\n" + "\n".join(f"  • {p}" for p in plugins)
+            )
+
+    @typst.command("blacklist")
+    async def cmd_blacklist_add(self, event: AstrMessageEvent, sub: str = "", plugin_id: str = ""):
+        """添加插件到黑名单"""
+        if sub != "add" or not plugin_id:
+            return
+        try:
+            current = list(self.config.get("ignored_plugins", []))
+            if plugin_id in current:
+                yield event.plain_result(f"⚠️ 插件 '{plugin_id}' 已在黑名单中")
+                return
+            current.append(plugin_id)
+            self.config["ignored_plugins"] = current
+            self.config.save_config()
+            self.plugin_config.ignored_plugins = set(current)
+            yield event.plain_result(f"✅ 已将 '{plugin_id}' 加入黑名单，下次重载后生效")
+        except Exception as e:
+            yield event.plain_result(f"❌ 添加失败: {e}")
+
+    @typst.command("blacklist")
+    async def cmd_blacklist_remove(self, event: AstrMessageEvent, sub: str = "", plugin_id: str = ""):
+        """从黑名单移除插件"""
+        if sub != "remove" or not plugin_id:
+            return
+        try:
+            current = list(self.config.get("ignored_plugins", []))
+            if plugin_id not in current:
+                yield event.plain_result(f"⚠️ 插件 '{plugin_id}' 不在黑名单中")
+                return
+            current.remove(plugin_id)
+            self.config["ignored_plugins"] = current
+            self.config.save_config()
+            self.plugin_config.ignored_plugins = set(current)
+            yield event.plain_result(f"✅ 已将 '{plugin_id}' 移出黑名单，下次重载后生效")
+        except Exception as e:
+            yield event.plain_result(f"❌ 移除失败: {e}")
+
     async def _safe_reload(self, pm, plugin_name):
         """延迟重载"""
         await asyncio.sleep(InternalCFG.DELAY_SEND)
@@ -243,7 +311,7 @@ class HelpTypst(Star):
     async def show_menu(self, event: AstrMessageEvent, query: str = ""):
         """显示指令菜单"""
         async for r in self._handle_request(
-            event, self.cmd_analyzer, "AstrBot 指令菜单", "command", query
+            event, self.cmd_analyzer, self.plugin_config.menu_title, "command", query
         ):
             yield r
 
@@ -251,7 +319,7 @@ class HelpTypst(Star):
     async def show_events(self, event: AstrMessageEvent, query: str = ""):
         """显示事件监听列表"""
         async for r in self._handle_request(
-            event, self.evt_analyzer, "AstrBot 事件监听", "event", query
+            event, self.evt_analyzer, self.plugin_config.event_title, "event", query
         ):
             yield r
 
@@ -259,6 +327,6 @@ class HelpTypst(Star):
     async def show_filters(self, event: AstrMessageEvent, query: str = ""):
         """显示过滤器详情"""
         async for r in self._handle_request(
-            event, self.flt_analyzer, "AstrBot 过滤器分析", "filter", query
+            event, self.flt_analyzer, self.plugin_config.filter_title, "filter", query
         ):
             yield r
