@@ -243,7 +243,7 @@ class HelpTypst(Star):
     async def show_menu(self, event: AstrMessageEvent, query: str = ""):
         """显示指令菜单"""
         async for r in self._handle_request(
-            event, self.cmd_analyzer, "AstrBot 指令菜单", "command", query
+            event, self.cmd_analyzer, self.plugin_config.menu_title, "command", query
         ):
             yield r
 
@@ -251,7 +251,7 @@ class HelpTypst(Star):
     async def show_events(self, event: AstrMessageEvent, query: str = ""):
         """显示事件监听列表"""
         async for r in self._handle_request(
-            event, self.evt_analyzer, "AstrBot 事件监听", "event", query
+            event, self.evt_analyzer, self.plugin_config.event_title, "event", query
         ):
             yield r
 
@@ -259,6 +259,6 @@ class HelpTypst(Star):
     async def show_filters(self, event: AstrMessageEvent, query: str = ""):
         """显示过滤器详情"""
         async for r in self._handle_request(
-            event, self.flt_analyzer, "AstrBot 过滤器分析", "filter", query
+            event, self.flt_analyzer, self.plugin_config.filter_title, "filter", query
         ):
             yield r

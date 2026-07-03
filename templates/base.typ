@@ -13,7 +13,13 @@
 
 // --- 页面设置 ---
 #let page_fill       = get_color("page_fill", "#f0f2f5")
-#set page(width: 900pt, height: auto, margin: 20pt, fill: page_fill)
+#let background_image = data.at("background_image", default: "")
+#set page(
+  width: 900pt, height: auto, margin: 20pt, fill: page_fill,
+  background: if background_image != "" {
+    place(top + left, image(background_image, width: 100%, height: 100%))
+  }
+)
 #set text(font: user_fonts, size: 12pt)
 
 // === 🎨 调色板 ===
@@ -42,6 +48,8 @@
 // --- 特殊视图 ---
 // 分区大标题
 #let c_text_primary  = get_color("c_text_primary", "#1a1a1a")
+// 顶部标题
+#let c_title_color   = get_color("c_title_color", "#1a1a1a")
 // 正则表达式视图
 #let c_regex_bg      = get_color("c_regex_bg", "#fff3e0")
 #let c_regex_text    = get_color("c_regex_text", "#e65100")
@@ -540,7 +548,7 @@
 // --- 主布局 ---
 #align(center)[
   #block(inset: (top: 20pt, bottom: 5pt))[
-    #text(size: 36pt, weight: "black", fill: c_text_primary)[#data.title] \
+    #text(size: 36pt, weight: "black", fill: c_title_color)[#data.title] \
     #v(6pt)
     #text(size: 11pt, fill: c_desc_text)[
       已加载 #data.plugin_count 个插件/监听组  ·  #generated_time

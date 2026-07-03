@@ -33,6 +33,7 @@ class AppearanceConfig:
     """外观配置聚合"""
     active_preset: str
     presets: dict[str, ThemePreset]
+    background_image: str = ""
     # 内部缓存字段
     _color_cache: dict[str, str] | None = field(init=False, default=None, repr=False)
 
@@ -88,6 +89,9 @@ class TypstPluginConfig:
     enable_waiting_message: bool
     ignored_plugins: set[str]
     custom_font_path: str
+    menu_title: str
+    event_title: str
+    filter_title: str
 
     rendering: RenderingConfig
     appearance: AppearanceConfig
@@ -152,12 +156,27 @@ class TypstPluginConfig:
                     colors=p_colors
                 )
 
+        # 提取激活预设的背景图
+        bg_image = ""
+        if isinstance(raw_presets_list, list):
+            for p_data in raw_presets_list:
+                if p_data.get("preset_name") == active_preset_name:
+                    bg_image = p_data.get("background_image", "") or ""
+                    break
+
         appearance_cfg = AppearanceConfig(
             active_preset=active_preset_name, 
-            presets=presets_dict
+            presets=presets_dict,
+            background_image=bg_image
         )
 
         custom_font_path = raw_config.get("custom_font_path", "")
+        
+        # Title settings
+        raw_titles = raw_config.get("title_settings", {})
+        menu_title = raw_titles.get("menu_title", "AstrBot 指令菜单") or "AstrBot 指令菜单"
+        event_title = raw_titles.get("event_title", "AstrBot 事件监听") or "AstrBot 事件监听"
+        filter_title = raw_titles.get("filter_title", "AstrBot 过滤器分析") or "AstrBot 过滤器分析"
         
         logger.debug(
             f"[HelpTypst] 配置加载完毕: PPI={render_cfg.ppi}, Concurrency={render_cfg.max_concurrent_tasks}, 外观预设: {active_preset_name}"
@@ -167,6 +186,9 @@ class TypstPluginConfig:
             enable_waiting_message=enable_wait,
             ignored_plugins=ignored_set,
             custom_font_path=custom_font_path,
+            menu_title=menu_title,
+            event_title=event_title,
+            filter_title=filter_title,
             rendering=render_cfg,
             appearance=appearance_cfg
         )

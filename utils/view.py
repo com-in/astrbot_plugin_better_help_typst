@@ -158,6 +158,8 @@ class TypstLayout:
         )
         # 注入颜色配置
         payload["colors"] = self.cfg.appearance.get_active_colors()
+        # 注入背景图
+        payload["background_image"] = self.cfg.appearance.background_image
 
         save_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"

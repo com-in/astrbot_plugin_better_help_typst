@@ -1,4 +1,28 @@
 {
+  "title_settings": {
+    "description": "标题自定义",
+    "type": "object",
+    "items": {
+      "menu_title": {
+        "description": "指令菜单标题",
+        "type": "string",
+        "default": "AstrBot 指令菜单",
+        "hint": "/helps 命令显示的标题"
+      },
+      "event_title": {
+        "description": "事件监听标题",
+        "type": "string",
+        "default": "AstrBot 事件监听",
+        "hint": "/events 命令显示的标题"
+      },
+      "filter_title": {
+        "description": "过滤器标题",
+        "type": "string",
+        "default": "AstrBot 过滤器分析",
+        "hint": "/filters 命令显示的标题"
+      }
+    }
+  },
   "enable_waiting_message": {
     "description": "启用等待提示",
     "type": "bool",
@@ -144,8 +168,19 @@
                 "type": "string",
                 "default": "#f0f2f5"
               },
+              "background_image": {
+                "description": "背景图片URL",
+                "type": "string",
+                "default": "",
+                "hint": "填写图床直链或图片URL，留空则使用纯色背景。支持 jpg/png/webp 等常见格式"
+              },
               "c_text_primary": {
-                "description": "主标题颜色",
+                "description": "分区大标题颜色",
+                "type": "string",
+                "default": "#1a1a1a"
+              },
+              "c_title_color": {
+                "description": "顶部标题颜色",
                 "type": "string",
                 "default": "#1a1a1a"
               },

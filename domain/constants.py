@@ -94,6 +94,7 @@ class DefaultCFG:
 
         # --- 特殊视图 ---
         "c_text_primary": "#1a1a1a", # 分区大标题
+        "c_title_color": "#1a1a1a",  # 顶部标题
         # 正则表达式视图
         "c_regex_bg": "#fff3e0",
         "c_regex_text": "#e65100",
