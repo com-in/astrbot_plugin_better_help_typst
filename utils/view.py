@@ -1,6 +1,8 @@
 import asyncio
+import hashlib
 import json
 import math
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -158,8 +160,9 @@ class TypstLayout:
         )
         # 注入颜色配置
         payload["colors"] = self.cfg.appearance.get_active_colors()
-        # 注入背景图
-        payload["background_image"] = self.cfg.appearance.background_image
+        # 注入背景图 (URL → 本地下载)
+        bg_image = self._resolve_background_image(save_path.parent)
+        payload["background_image"] = bg_image
         payload["background_opacity"] = self.cfg.appearance.background_opacity
         # 注入自定义项目
         payload["custom_items"] = [ci.model_dump() for ci in self.cfg.custom_items]
@@ -167,6 +170,38 @@ class TypstLayout:
         save_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+
+    def _resolve_background_image(self, data_dir: Path) -> str:
+        """如果背景图是 URL，下载到本地缓存并返回本地路径"""
+        bg = self.cfg.appearance.background_image
+        if not bg:
+            return ""
+
+        # 本地路径，直接返回
+        if not (bg.startswith("http://") or bg.startswith("https://")):
+            return bg
+
+        cache_dir = data_dir / "bg_cache"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+
+        url_hash = hashlib.md5(bg.encode()).hexdigest()[:12]
+        ext = bg.rsplit("?", 1)[0].rsplit("/", 1)[-1]
+        if ext and "." in ext:
+            ext = ext.rsplit(".", 1)[-1]
+        else:
+            ext = "png"
+        local_path = cache_dir / f"bg_{url_hash}.{ext}"
+
+        if local_path.exists():
+            return str(local_path)
+
+        try:
+            urllib.request.urlretrieve(bg, str(local_path))
+            logger.info(f"[HelpTypst] 背景图已下载: {local_path}")
+            return str(local_path)
+        except Exception as e:
+            logger.warning(f"[HelpTypst] 背景图下载失败，已跳过: {e}")
+            return ""
 
     def _generate_balanced_payload(
         self,
