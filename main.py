@@ -144,7 +144,7 @@ class HelpTypst(Star):
                 self.context, "_star_manager", None
             )  # hack: 获取 PluginManager 实例
             if pm:
-                plugin_name = getattr(self, "name", "astrbot_plugin_help_typst")
+                plugin_name = getattr(self, "name", "astrbot_plugin_better_help_typst")
                 yield event.plain_result(
                     f"✅ 扫描完成 ({count} fonts)。正在重载以刷新面板..."
                 )

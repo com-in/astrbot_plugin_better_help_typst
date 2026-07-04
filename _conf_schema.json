@@ -39,7 +39,7 @@
       "session_controller",
       "builtin_commands",
       "astrbot-reminder", 
-      "astrbot_plugin_help_typst"
+      "astrbot_plugin_better_help_typst"
     ],
     "hint": "屏蔽不想展示、导致问题的插件菜单 (使用 name 字段)"
   },
@@ -47,7 +47,7 @@
     "description": "自定义字体目录",
     "type": "string",
     "default": "",
-    "hint": "绝对路径。缺省值 .../data/plugin_data/astrbot_plugin_help_typst/fonts"
+    "hint": "绝对路径。缺省值 .../data/plugin_data/astrbot_plugin_better_help_typst/fonts"
   },
   "custom_template_path": {
     "description": "自定义模板路径",

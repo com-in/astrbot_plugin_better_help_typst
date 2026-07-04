@@ -58,7 +58,7 @@ Zhalslar(饰乐)  https://github.com/Zhalslar
 文档显式指定 > 项目字体目录 > 系统字体库
 * 文档显式指定：通过 #set text(font: "font-family-name") 直接指定，优先级最高
 * 项目字体目录：即本插件的根目录下的 ./resources/fonts <br>
-~~后面会考虑增加额外的目录支持~~已完成，缺省值为 `.../data/plugin_data/astrbot_plugin_help_typst/fonts` 🚨 docker 用户记得确保自定义字体目录已被挂载
+~~后面会考虑增加额外的目录支持~~已完成，缺省值为 `.../data/plugin_data/astrbot_plugin_better_help_typst/fonts` 🚨 docker 用户记得确保自定义字体目录已被挂载
 * 系统字体库：获取系统默认字体目录 ( Windows、macOS 应该有官方支持，Linux 未测试支持度如何；🚨 docker 环境可能需要安装字体依赖）
 
 ## 🌳 目录结构（初步预期）
