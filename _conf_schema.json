@@ -218,6 +218,12 @@
                 "default": "100%",
                 "hint": "背景图片的透明度，100% 为完全不透明，50% 为半透明。支持百分比或 0-1 小数"
               },
+              "bg_cache_enabled": {
+                "description": "缓存背景图",
+                "type": "boolean",
+                "default": true,
+                "hint": "开启后使用本地缓存的背景图，节省网络请求。关闭后每次渲染都会重新下载。使用 /typst bgcache clear 可清理缓存"
+              },
               "c_text_primary": {
                 "description": "分区大标题颜色",
                 "type": "string",

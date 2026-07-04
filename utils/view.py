@@ -192,8 +192,13 @@ class TypstLayout:
             ext = "png"
         local_path = cache_dir / f"bg_{url_hash}.{ext}"
 
-        if local_path.exists():
+        # 缓存开启 → 命中则直接返回
+        if self.cfg.appearance.bg_cache_enabled and local_path.exists():
             return str(local_path)
+
+        # 缓存关闭 → 删除旧文件，强制重新下载
+        if not self.cfg.appearance.bg_cache_enabled:
+            local_path.unlink(missing_ok=True)
 
         try:
             urllib.request.urlretrieve(bg, str(local_path))

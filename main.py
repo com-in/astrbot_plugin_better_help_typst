@@ -213,6 +213,34 @@ class HelpTypst(Star):
         except Exception as e:
             yield event.plain_result(f"❌ 移除失败: {e}")
 
+    @typst.command("bgcache")
+    async def cmd_bgcache_root(self, event: AstrMessageEvent):
+        """背景图缓存管理根指令"""
+        yield event.plain_result(
+            "🖼️ 背景图缓存管理:\n"
+            "/typst bgcache clear - 清理所有缓存的背景图"
+        )
+
+    @typst.command("bgcache")
+    async def cmd_bgcache_clear(self, event: AstrMessageEvent, sub: str = ""):
+        """清理背景图缓存"""
+        if sub != "clear":
+            return
+        cache_dir = self.data_dir / "bg_cache"
+        if not cache_dir.exists():
+            yield event.plain_result("📂 缓存目录不存在，无需清理")
+            return
+
+        count = 0
+        for f in cache_dir.iterdir():
+            if f.is_file():
+                try:
+                    f.unlink()
+                    count += 1
+                except Exception:
+                    pass
+        yield event.plain_result(f"✅ 已清理 {count} 个背景图缓存文件")
+
     async def _safe_reload(self, pm, plugin_name):
         """延迟重载"""
         await asyncio.sleep(InternalCFG.DELAY_SEND)
