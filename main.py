@@ -53,7 +53,7 @@ class HelpTypst(Star):
 
         # 3. 初始化组件
         self.font_manager = FontManager(self.font_dirs)
-        self.layout = TypstLayout(self.plugin_config)
+        self.layout = TypstLayout(self.plugin_config, self.plugin_dir)
         self.hint = HelpHint()
         self.msg = MsgRecall()
 
@@ -226,7 +226,7 @@ class HelpTypst(Star):
         """清理背景图缓存"""
         if sub != "clear":
             return
-        cache_dir = self.data_dir / "bg_cache"
+        cache_dir = self.plugin_dir / "bg_cache"
         if not cache_dir.exists():
             yield event.plain_result("📂 缓存目录不存在，无需清理")
             return
