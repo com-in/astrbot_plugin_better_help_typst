@@ -103,6 +103,17 @@
         "default": 180.0,
         "hint": "越高图片越清晰，但越慢&大&高占用，根据内存 & 带宽调整"
       },
+      "render_width": {
+        "description": "渲染宽度 (pt)",
+        "type": "int",
+		"slider": {
+          "min": 400,
+          "max": 2000,
+          "step": 50
+        },
+        "default": 900,
+        "hint": "图片渲染宽度，单位 pt。越大图片越宽，建议 600-1200，根据终端屏幕宽度调整"
+      },
       "giant_threshold": {
         "description": "巨型块阈值 (pt)",
         "type": "int",

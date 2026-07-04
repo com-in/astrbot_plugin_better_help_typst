@@ -165,6 +165,8 @@ class TypstLayout:
         bg_image = self._resolve_background_image()
         payload["background_image"] = bg_image
         payload["background_opacity"] = self.cfg.appearance.background_opacity
+        # 注入渲染宽度
+        payload["render_width"] = self.cfg.rendering.render_width
         # 注入自定义项目
         payload["custom_items"] = [ci.model_dump() for ci in self.cfg.custom_items]
 

@@ -19,6 +19,7 @@ class RenderingConfig:
     webp_limit: int
     split_height: int
     ppi: float
+    render_width: int
 
 
 @dataclass
@@ -127,6 +128,7 @@ class TypstPluginConfig:
             webp_limit=raw_render.get("webp_limit", DefaultCFG.LIMIT_WEBP),
             split_height=raw_render.get("split_height", DefaultCFG.LIMIT_SIDE),
             ppi=float(raw_render.get("ppi", DefaultCFG.LIMIT_PPI)),
+            render_width=raw_render.get("render_width", DefaultCFG.LIMIT_WIDTH),
         )
 
         # Appearance

@@ -49,6 +49,7 @@ class DefaultCFG:
     LIMIT_WEBP: int = 16383
     LIMIT_SIDE: int = 16000
     LIMIT_PPI: float = 144.0
+    LIMIT_WIDTH: int = 900
 
     # 2. 超时设置 (秒)
     TIMEOUT_ANALYSIS: float = 10.0
