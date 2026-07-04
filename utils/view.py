@@ -1,6 +1,8 @@
 import asyncio
+import hashlib
 import json
 import math
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -140,8 +142,9 @@ class MsgRecall:
 class TypstLayout:
     """负责将结构化数据转换为 Typst 渲染所需的布局 JSON"""
 
-    def __init__(self, config: TypstPluginConfig):
+    def __init__(self, config: TypstPluginConfig, plugin_dir: Path):
         self.cfg = config
+        self.plugin_dir = plugin_dir
 
     def dump_layout_json(
         self,
@@ -158,15 +161,55 @@ class TypstLayout:
         )
         # 注入颜色配置
         payload["colors"] = self.cfg.appearance.get_active_colors()
-        # 注入背景图
-        payload["background_image"] = self.cfg.appearance.background_image
+        # 注入背景图 (URL → 本地下载)
+        bg_image = self._resolve_background_image()
+        payload["background_image"] = bg_image
         payload["background_opacity"] = self.cfg.appearance.background_opacity
+        # 注入渲染宽度
+        payload["render_width"] = self.cfg.rendering.render_width
         # 注入自定义项目
         payload["custom_items"] = [ci.model_dump() for ci in self.cfg.custom_items]
 
         save_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+
+    def _resolve_background_image(self) -> str:
+        """如果背景图是 URL，下载到插件目录并返回相对于 templates/ 的路径"""
+        bg = self.cfg.appearance.background_image
+        if not bg:
+            return ""
+
+        # 本地路径，直接返回
+        if not (bg.startswith("http://") or bg.startswith("https://")):
+            return bg
+
+        cache_dir = self.plugin_dir / "templates" / "bg_cache"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+
+        url_hash = hashlib.md5(bg.encode()).hexdigest()[:12]
+        ext = bg.rsplit("?", 1)[0].rsplit("/", 1)[-1]
+        if ext and "." in ext:
+            ext = ext.rsplit(".", 1)[-1]
+        else:
+            ext = "png"
+        local_path = cache_dir / f"bg_{url_hash}.{ext}"
+
+        # 缓存开启 → 命中则直接返回 (相对 templates/ 的路径)
+        if self.cfg.appearance.bg_cache_enabled and local_path.exists():
+            return f"bg_cache/bg_{url_hash}.{ext}"
+
+        # 缓存关闭 → 删除旧文件，强制重新下载
+        if not self.cfg.appearance.bg_cache_enabled:
+            local_path.unlink(missing_ok=True)
+
+        try:
+            urllib.request.urlretrieve(bg, str(local_path))
+            logger.info(f"[HelpTypst] 背景图已下载: {local_path}")
+            return f"bg_cache/bg_{url_hash}.{ext}"
+        except Exception as e:
+            logger.warning(f"[HelpTypst] 背景图下载失败，已跳过: {e}")
+            return ""
 
     def _generate_balanced_payload(
         self,

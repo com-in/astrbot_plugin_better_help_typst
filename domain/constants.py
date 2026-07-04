@@ -49,6 +49,7 @@ class DefaultCFG:
     LIMIT_WEBP: int = 16383
     LIMIT_SIDE: int = 16000
     LIMIT_PPI: float = 144.0
+    LIMIT_WIDTH: int = 900
 
     # 2. 超时设置 (秒)
     TIMEOUT_ANALYSIS: float = 10.0
@@ -63,7 +64,7 @@ class DefaultCFG:
         "session_controller",
         "builtin_commands",
         "astrbot-reminder",
-        "astrbot_plugin_help_typst",
+        "astrbot_plugin_better_help_typst",
     }
 
     # 4. 默认配色 (Original Palette)

@@ -14,24 +14,26 @@
 // --- 页面设置 ---
 #let page_fill       = get_color("page_fill", "#f0f2f5")
 #let background_image = data.at("background_image", default: "")
-#let background_opacity = data.at("background_opacity", default: "100%")
+#let background_opacity = data.at("background_opacity", default: 60)
+#let render_width     = data.at("render_width", default: 900)
 #let parse_opacity(v) = {
   if type(v) == str and v.ends-with("%") {
     float(v.trim("%", at: end)) / 100
   } else if type(v) == str {
     float(v)
   } else if type(v) in (int, float) {
-    float(v)
+    float(v) / 100
   } else {
     1.0
   }
 }
 #set page(
-  width: 900pt, height: auto, margin: 20pt, fill: page_fill,
+  width: render_width * 1pt, height: auto, margin: 20pt, fill: page_fill,
   background: if background_image != "" {
     place(top + left, {
       let op = parse_opacity(background_opacity)
-      image(background_image, width: 100%, height: 100%, opacity: int(op * 100) + "%")
+      image(background_image, width: 100%, height: 100%)
+      rect(width: 100%, height: 100%, fill: page_fill.transparentize(op * 100%))
     })
   }
 )

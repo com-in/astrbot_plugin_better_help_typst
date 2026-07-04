@@ -53,7 +53,7 @@ class HelpTypst(Star):
 
         # 3. 初始化组件
         self.font_manager = FontManager(self.font_dirs)
-        self.layout = TypstLayout(self.plugin_config)
+        self.layout = TypstLayout(self.plugin_config, self.plugin_dir)
         self.hint = HelpHint()
         self.msg = MsgRecall()
 
@@ -144,7 +144,7 @@ class HelpTypst(Star):
                 self.context, "_star_manager", None
             )  # hack: 获取 PluginManager 实例
             if pm:
-                plugin_name = getattr(self, "name", "astrbot_plugin_help_typst")
+                plugin_name = getattr(self, "name", "astrbot_plugin_better_help_typst")
                 yield event.plain_result(
                     f"✅ 扫描完成 ({count} fonts)。正在重载以刷新面板..."
                 )
@@ -212,6 +212,34 @@ class HelpTypst(Star):
             yield event.plain_result(f"✅ 已将 '{plugin_id}' 移出黑名单，下次重载后生效")
         except Exception as e:
             yield event.plain_result(f"❌ 移除失败: {e}")
+
+    @typst.command("bgcache")
+    async def cmd_bgcache_root(self, event: AstrMessageEvent):
+        """背景图缓存管理根指令"""
+        yield event.plain_result(
+            "🖼️ 背景图缓存管理:\n"
+            "/typst bgcache clear - 清理所有缓存的背景图"
+        )
+
+    @typst.command("bgcache")
+    async def cmd_bgcache_clear(self, event: AstrMessageEvent, sub: str = ""):
+        """清理背景图缓存"""
+        if sub != "clear":
+            return
+        cache_dir = self.plugin_dir / "templates" / "bg_cache"
+        if not cache_dir.exists():
+            yield event.plain_result("📂 缓存目录不存在，无需清理")
+            return
+
+        count = 0
+        for f in cache_dir.iterdir():
+            if f.is_file():
+                try:
+                    f.unlink()
+                    count += 1
+                except Exception:
+                    pass
+        yield event.plain_result(f"✅ 已清理 {count} 个背景图缓存文件")
 
     async def _safe_reload(self, pm, plugin_name):
         """延迟重载"""

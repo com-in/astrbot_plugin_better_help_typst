@@ -39,7 +39,7 @@
       "session_controller",
       "builtin_commands",
       "astrbot-reminder", 
-      "astrbot_plugin_help_typst"
+      "astrbot_plugin_better_help_typst"
     ],
     "hint": "屏蔽不想展示、导致问题的插件菜单 (使用 name 字段)"
   },
@@ -47,7 +47,7 @@
     "description": "自定义字体目录",
     "type": "string",
     "default": "",
-    "hint": "绝对路径。缺省值 .../data/plugin_data/astrbot_plugin_help_typst/fonts"
+    "hint": "绝对路径。缺省值 .../data/plugin_data/astrbot_plugin_better_help_typst/fonts"
   },
   "custom_template_path": {
     "description": "自定义模板路径",
@@ -102,6 +102,17 @@
         },
         "default": 180.0,
         "hint": "越高图片越清晰，但越慢&大&高占用，根据内存 & 带宽调整"
+      },
+      "render_width": {
+        "description": "渲染宽度 (pt)",
+        "type": "int",
+		"slider": {
+          "min": 400,
+          "max": 2000,
+          "step": 50
+        },
+        "default": 900,
+        "hint": "图片渲染宽度，单位 pt。越大图片越宽，建议 600-1200，根据终端屏幕宽度调整"
       },
       "giant_threshold": {
         "description": "巨型块阈值 (pt)",
@@ -209,14 +220,22 @@
               "background_image": {
                 "description": "背景图片URL",
                 "type": "string",
-                "default": "",
-                "hint": "填写图床直链或图片URL，留空则使用纯色背景。支持 jpg/png/webp 等常见格式"
+                "default": "https://bing.img.run/1920x1080.php",
+                "hint": "填写图床直链或图片URL，默认为 Bing 每日壁纸。留空则使用纯色背景。支持 jpg/png/webp 等常见格式"
               },
               "background_opacity": {
                 "description": "背景图片不透明度",
-                "type": "string",
-                "default": "100%",
-                "hint": "背景图片的透明度，100% 为完全不透明，50% 为半透明。支持百分比或 0-1 小数"
+                "type": "number",
+                "default": 60,
+                "minimum": 0,
+                "maximum": 100,
+                "hint": "拖动滑块调整透明度。0 = 完全透明，100 = 完全不透明。默认 60"
+              },
+              "bg_cache_enabled": {
+                "description": "缓存背景图",
+                "type": "boolean",
+                "default": true,
+                "hint": "开启后使用本地缓存的背景图，节省网络请求。关闭后每次渲染都会重新下载。使用 /typst bgcache clear 可清理缓存"
               },
               "c_text_primary": {
                 "description": "分区大标题颜色",
