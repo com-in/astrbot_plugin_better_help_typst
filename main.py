@@ -226,7 +226,7 @@ class HelpTypst(Star):
         """清理背景图缓存"""
         if sub != "clear":
             return
-        cache_dir = self.plugin_dir / "bg_cache"
+        cache_dir = self.plugin_dir / "templates" / "bg_cache"
         if not cache_dir.exists():
             yield event.plain_result("📂 缓存目录不存在，无需清理")
             return

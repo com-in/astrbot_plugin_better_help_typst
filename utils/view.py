@@ -182,7 +182,7 @@ class TypstLayout:
         if not (bg.startswith("http://") or bg.startswith("https://")):
             return bg
 
-        cache_dir = self.plugin_dir / "bg_cache"
+        cache_dir = self.plugin_dir / "templates" / "bg_cache"
         cache_dir.mkdir(parents=True, exist_ok=True)
 
         url_hash = hashlib.md5(bg.encode()).hexdigest()[:12]
@@ -195,7 +195,7 @@ class TypstLayout:
 
         # 缓存开启 → 命中则直接返回 (相对 templates/ 的路径)
         if self.cfg.appearance.bg_cache_enabled and local_path.exists():
-            return f"../bg_cache/bg_{url_hash}.{ext}"
+            return f"bg_cache/bg_{url_hash}.{ext}"
 
         # 缓存关闭 → 删除旧文件，强制重新下载
         if not self.cfg.appearance.bg_cache_enabled:
@@ -204,7 +204,7 @@ class TypstLayout:
         try:
             urllib.request.urlretrieve(bg, str(local_path))
             logger.info(f"[HelpTypst] 背景图已下载: {local_path}")
-            return f"../bg_cache/bg_{url_hash}.{ext}"
+            return f"bg_cache/bg_{url_hash}.{ext}"
         except Exception as e:
             logger.warning(f"[HelpTypst] 背景图下载失败，已跳过: {e}")
             return ""
