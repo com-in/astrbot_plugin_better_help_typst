@@ -31,7 +31,8 @@
   background: if background_image != "" {
     place(top + left, {
       let op = parse_opacity(background_opacity)
-      image(background_image, width: 100%, height: 100%, opacity: str(int(op * 100)) + "%")
+      image(background_image, width: 100%, height: 100%)
+      rect(width: 100%, height: 100%, fill: page_fill.transparentize(op))
     })
   }
 )
