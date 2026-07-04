@@ -35,7 +35,7 @@ class AppearanceConfig:
     active_preset: str
     presets: dict[str, ThemePreset]
     background_image: str = ""
-    background_opacity: str = "100%"
+    background_opacity: float = 60.0
     bg_cache_enabled: bool = True
     # 内部缓存字段
     _color_cache: dict[str, str] | None = field(init=False, default=None, repr=False)
@@ -163,13 +163,15 @@ class TypstPluginConfig:
 
         # 提取激活预设的背景图
         bg_image = ""
-        bg_opacity = "100%"
+        bg_opacity = 60.0
         bg_cache_enabled = True
         if isinstance(raw_presets_list, list):
             for p_data in raw_presets_list:
                 if p_data.get("preset_name") == active_preset_name:
                     bg_image = p_data.get("background_image", "") or ""
-                    bg_opacity = p_data.get("background_opacity", "100%") or "100%"
+                    raw_opacity = p_data.get("background_opacity")
+                    if raw_opacity is not None:
+                        bg_opacity = float(raw_opacity)
                     bg_cache_enabled = p_data.get("bg_cache_enabled", True)
                     if bg_cache_enabled is None:
                         bg_cache_enabled = True

@@ -14,14 +14,14 @@
 // --- 页面设置 ---
 #let page_fill       = get_color("page_fill", "#f0f2f5")
 #let background_image = data.at("background_image", default: "")
-#let background_opacity = data.at("background_opacity", default: "100%")
+#let background_opacity = data.at("background_opacity", default: 60)
 #let parse_opacity(v) = {
   if type(v) == str and v.ends-with("%") {
     float(v.trim("%", at: end)) / 100
   } else if type(v) == str {
     float(v)
   } else if type(v) in (int, float) {
-    float(v)
+    float(v) / 100
   } else {
     1.0
   }
