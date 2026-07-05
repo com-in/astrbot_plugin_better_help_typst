@@ -233,7 +233,7 @@
               },
               "bg_cache_enabled": {
                 "description": "缓存背景图",
-                "type": "boolean",
+                "type": "bool",
                 "default": true,
                 "hint": "开启后使用本地缓存的背景图，节省网络请求。关闭后每次渲染都会重新下载。使用 /typst bgcache clear 可清理缓存"
               },
