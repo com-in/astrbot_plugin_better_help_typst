@@ -162,7 +162,7 @@
           },
           "entries": {
             "description": "条目列表（每行一个，格式：名称|描述）",
-            "type": "string",
+            "type": "text",
             "default": "",
             "hint": "每行一个条目，用 | 分隔名称和描述\n例如：\n群规则|请遵守群规\n官网|https://example.com"
           }
